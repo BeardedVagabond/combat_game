@@ -1,5 +1,5 @@
 # combat_game
-A text-based rpg style fighter based largely on DnD5e rules
+A text-based rpg style fighter based largely on DnD 5e rules
 
 NOTE: Originally coded in PyCharm using a Conda environment (Python 3.6)
       All combatants are currently instantiated as a level 1 rogue for simplicity (1d8 hit dice) 
