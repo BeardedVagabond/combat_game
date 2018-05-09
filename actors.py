@@ -70,6 +70,7 @@ class Combatant:
 
     def __str__(self):
         return "{} with stats of {}, \n modifiers of {}, \n armor class of {}, and HP of {}/{}.\n" \
+               "NOTE: Stats & modifiers are in the format of [STR, DEX, CON, INT, WIS, CHR]\n" \
             .format(self.name, self.stats, self.modifiers, self.AC, self.HP, self.MaxHP)
 
     def attack(self, d20_roll, enemy):
