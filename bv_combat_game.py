@@ -76,7 +76,7 @@ def game_loop(d20, d8, enemies, player):
         if cmd == 'f':
             print('Which combatant do you wish to fight?\n')
             for idx, entry in enumerate(enemies):
-                print('[{}] {}'.format(idx + 1, entry.name))
+                print(f'[{idx + 1}] {entry.name}')
 
             selected = 0
             while not selected:
@@ -95,7 +95,7 @@ def game_loop(d20, d8, enemies, player):
 
             if combat:
                 fighter = enemies[enemy - 1]
-                print('{} charges at {}!!\n'.format(player.name, enemies[enemy - 1].name))
+                print(f'{player.name} charges at {enemies[enemy - 1].name}!!\n')
 
                 while combat:
 
@@ -123,8 +123,8 @@ def game_loop(d20, d8, enemies, player):
                             break
 
                         else:
-                            print('{} now has {}HP'.format(player.name, player.HP))
-                            print('{} now has {}HP\n'.format(fighter.name, fighter.HP))
+                            print(f'{player.name} now has {player.HP}HP')
+                            print(f'{fighter.name} now has {fighter.HP}HP\n')
                         # time.sleep(1)
 
                     elif combat_cmd == 'r':  # this isn't from DnD reference materials... just needed something
@@ -133,11 +133,11 @@ def game_loop(d20, d8, enemies, player):
                         run_roll = run_roll[0:2]
 
                         if max(run_roll) >= 10 - player.modifiers[1]:  # DEX modifiers adds to escape chance
-                            print('{} makes a narrow escape!\n'.format(player.name))
+                            print(f'{player.name} makes a narrow escape!\n')
                             break
 
                         else:
-                            print("{} stumbles and can't get away!\n".format(player.name))
+                            print(f"{player.name} stumbles and can't get away!\n")
                             # target attacks player
                             attack_target(d20, d8, player, fighter)
                             player_defeated = health_status(player, fighter, enemies, 'player')
@@ -145,25 +145,24 @@ def game_loop(d20, d8, enemies, player):
                                 break
 
                     else:
-                        print("Sorry, the command '{}' wasn't recognized. Please re-enter a command\n".format(
-                            combat_cmd))
+                        print(f"Sorry, the command '{combat_cmd}' wasn't recognized. Please re-enter a command\n")
 
             else:
-                print('{} charges at... thin air!?'.format(player.name))
+                print(f'{player.name} charges at... thin air!?')
                 reaction_enemy = random.choice(enemies)
-                print('{} reacts to the opening and attacks {}!!...\n'.format(reaction_enemy.name, player.name))
+                print(f'{reaction_enemy.name} reacts to the opening and attacks {player.name}!!...\n')
                 attack_target(d20, d8, player, reaction_enemy)
                 health_status(player, reaction_enemy, enemies, 'player')
 
         elif cmd == 'c':
-            print('{} currently has {}/{}HP.\n'.format(player.name, player.HP, player.MaxHP))
+            print(f'{player.name} currently has {player.HP}/{player.MaxHP}HP.\n')
 
         elif cmd == 'r':
-            print('{} takes a short rest at a fire...'.format(player.name))
+            print(f'{player.name} takes a short rest at a fire...')
             rest_roll = sum(d8.roll(1))
             rest_heal = player.heal(rest_roll)
-            print('{} regains {}HP.\n'.format(player.name, rest_heal)) if rest_heal > 0 \
-                else print('{} is already at full HP!\n'.format(player.name))
+            print(f'{player.name} regains {rest_heal}HP.\n') if rest_heal > 0 \
+                else print(f'{player.name} is already at full HP!\n')
 
         elif cmd == 'l':
             player.look(enemies)
@@ -173,10 +172,10 @@ def game_loop(d20, d8, enemies, player):
             break
 
         else:
-            print("Sorry, the command '{}' wasn't recognized. Please re-enter a command".format(cmd))
+            print(f"Sorry, the command '{cmd}' wasn't recognized. Please re-enter a command")
 
         if not enemies:
-            print('Congratulations! {} has defeated all of their enemies!!'.format(player.name))
+            print(f'Congratulations! {player.name} has defeated all of their enemies!!')
             print("Thank's for playing!")
             break
 
@@ -191,24 +190,24 @@ def attack_target(d20, d8, target, attacker):
     :return: UI output for combat summary
     """
     roll = sum(d20.roll(1))
-    print('{} rolled a {}!'.format(attacker.name, roll))
+    print(f'{attacker.name} rolled a {roll}!')
     hit = attacker.attack(roll, target)
-    print("{}'s AC is {}...".format(target.name, target.AC))
+    print(f"{target.name}'s AC is {target.AC}...")
 
     if hit == 2:
-        print('{} scored a critical hit!!'.format(attacker.name))
+        print(f'{attacker.name} scored a critical hit!!')
         damage_dice = sum(d8.roll(2))  # double rolls for critical
         damage = target.sustain_damage(damage_dice, attacker)
-        print('{} dealt {} damage to {}!\n'.format(attacker.name, damage, target.name))
+        print(f'{attacker.name} dealt {damage} damage to {target.name}!\n')
 
     elif hit == 1:
-        print('{} scored a hit!'.format(attacker.name))
+        print(f'{attacker.name} scored a hit!')
         damage_dice = sum(d8.roll(1))
         damage = target.sustain_damage(damage_dice, attacker)
-        print('{} dealt {} damage to {}!\n'.format(attacker.name, damage, target.name))
+        print(f'{attacker.name} dealt {damage} damage to {target.name}!\n')
 
     else:
-        print("{}'s attack missed...\n".format(attacker.name))
+        print(f"{attacker.name}'s attack missed...\n")
 
 
 def health_status(player, enemy, enemies, target):
@@ -223,9 +222,8 @@ def health_status(player, enemy, enemies, target):
     if target == 'player':
 
         if player.HP == 0:
-            print('{} has defeated {}!...'.format(enemy.name, player.name))
-            print('{} awakens, bruised, embarrassed, and barely alive to fight another day...'
-                  .format(player.name))
+            print(f'{enemy.name} has defeated {player.name}!...')
+            print(f'{player.name} awakens, bruised, embarrassed, and barely alive to fight another day...')
             print('* Your health points have been restored to 1 *\n')
             player.HP = 1
             return 1
@@ -236,7 +234,7 @@ def health_status(player, enemy, enemies, target):
     elif target == 'enemy':
 
         if enemy.HP == 0:
-            print('{} defeated {}!\n'.format(player.name, enemy.name))
+            print(f'{player.name} defeated {enemy.name}!\n')
             enemies.remove(enemy)
             return 1
 

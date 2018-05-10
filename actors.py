@@ -15,7 +15,7 @@ class Die:
         self.sides = sides
 
     def __str__(self):
-        return "A {} sided die.".format(self.sides)
+        return f"A {self.sides} sided die."
 
     def roll(self, rolls):
         """
@@ -69,9 +69,9 @@ class Combatant:
         self.HP = self.MaxHP
 
     def __str__(self):
-        return "{} with stats of {}, \n modifiers of {}, \n armor class of {}, and HP of {}/{}.\n" \
-               "NOTE: Stats & modifiers are in the format of [STR, DEX, CON, INT, WIS, CHR]\n" \
-            .format(self.name, self.stats, self.modifiers, self.AC, self.HP, self.MaxHP)
+        return f"{self.name} with stats of {self.stats}, \n modifiers of {self.modifiers}, \n " \
+               f"armor class of {self.AC}, and HP of {self.HP}/{self.MaxHP}.\n " \
+               f"NOTE: Stats & modifiers are in the format of [STR, DEX, CON, INT, WIS, CHR]\n"
 
     def attack(self, d20_roll, enemy):
         """
@@ -116,7 +116,7 @@ class Player(Combatant):
         :return: UI output detailed remaining enemies
         """
         for idx, entry in enumerate(enemies):
-            print('[{}] {}'.format(idx + 1, entry))
+            print(f'[{idx + 1}] {entry}')
 
     def fight(self, enemy, enemies):
         """
