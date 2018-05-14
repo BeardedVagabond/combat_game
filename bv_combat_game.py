@@ -80,7 +80,7 @@ def game_loop(d20, d8, enemies, player):
             print(f'{player.name} currently has {player.HP}/{player.MaxHP}HP.\n')
 
         elif cmd == 'r':
-            rest(d8, player)
+            rest(d8, player, enemies)
 
         elif cmd == 'l':
             player.look(enemies)
@@ -98,12 +98,20 @@ def game_loop(d20, d8, enemies, player):
             break
 
 
-def rest(d8, player):
+def rest(d8, player, enemies):
+    # Player rest
     print(f'{player.name} takes a short rest at a fire...')
     rest_roll = sum(d8.roll(1))
     rest_heal = player.heal(rest_roll)
-    print(f'{player.name} regains {rest_heal}HP.\n') if rest_heal > 0 \
-        else print(f'{player.name} is already at full HP!\n')
+    print(f'{player.name} regains {rest_heal}HP.') if rest_heal > 0 \
+        else print(f'{player.name} is already at full HP!')
+    # Enemy rest loop
+    for enemy in enemies:
+        rest_roll = sum(d8.roll(1))
+        rest_heal = enemy.heal(rest_roll // 2)
+        if rest_heal > 0:
+            print(f'{enemy.name} took a short rest as well...')
+    print()
 
 
 def fight_loop(d20, d8, enemies, player):
