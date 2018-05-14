@@ -74,95 +74,13 @@ def game_loop(d20, d8, enemies, player):
         cmd = cmd.lower().strip()
 
         if cmd == 'f':
-            print('Which combatant do you wish to fight?\n')
-            for idx, entry in enumerate(enemies):
-                print(f'[{idx + 1}] {entry.name}')
-
-            selected = 0
-            while not selected:
-                enemy = input('==> ')
-                if not enemy:
-                    print('No enemy selected. Please re-enter your target.\n')
-                    continue
-                try:
-                    enemy = int(enemy)
-                    selected = 1
-
-                except ValueError:
-                    print('Invalid target selection. Please re-enter your target.\n')
-
-            combat = player.fight(enemy, enemies)
-
-            if combat:
-                fighter = enemies[enemy - 1]
-                print(f'{player.name} charges at {enemies[enemy - 1].name}!!\n')
-
-                while combat:
-
-                    combat_cmd = input('What would you like to do? [A]ttack, [R]un away: ')
-                    if not combat_cmd:
-                        print("No input detected, please re-enter a command.\n")
-                        continue
-                    combat_cmd = combat_cmd.lower().strip()
-
-                    if combat_cmd == 'a':
-                        print('Rolling some dice...\n')
-                        # no initiative rolls for now, player always goes first...
-                        # Kirito has the fastest reaction times after all :)
-
-                        # player attacks target
-                        attack_target(d20, d8, fighter, player)  # d20, d8, target, attacker
-                        enemy_defeated = health_status(player, fighter, enemies, 'enemy')
-                        if enemy_defeated:
-                            break
-
-                        # target attacks player
-                        attack_target(d20, d8, player, fighter)
-                        player_defeated = health_status(player, fighter, enemies, 'player')
-                        if player_defeated:
-                            break
-
-                        else:
-                            print(f'{player.name} now has {player.HP}HP')
-                            print(f'{fighter.name} now has {fighter.HP}HP\n')
-                        # time.sleep(1)
-
-                    elif combat_cmd == 'r':  # this isn't from DnD reference materials... just needed something
-                        run_roll = d20.roll(3)
-                        run_roll.sort()
-                        run_roll = run_roll[0:2]
-
-                        if max(run_roll) >= 10 - player.modifiers[1]:  # DEX modifiers adds to escape chance
-                            print(f'{player.name} makes a narrow escape!\n')
-                            break
-
-                        else:
-                            print(f"{player.name} stumbles and can't get away!\n")
-                            # target attacks player
-                            attack_target(d20, d8, player, fighter)
-                            player_defeated = health_status(player, fighter, enemies, 'player')
-                            if player_defeated:
-                                break
-
-                    else:
-                        print(f"Sorry, the command '{combat_cmd}' wasn't recognized. Please re-enter a command\n")
-
-            else:
-                print(f'{player.name} charges at... thin air!?')
-                reaction_enemy = random.choice(enemies)
-                print(f'{reaction_enemy.name} reacts to the opening and attacks {player.name}!!...\n')
-                attack_target(d20, d8, player, reaction_enemy)
-                health_status(player, reaction_enemy, enemies, 'player')
+            fight_loop(d20, d8, enemies, player)
 
         elif cmd == 'c':
             print(f'{player.name} currently has {player.HP}/{player.MaxHP}HP.\n')
 
         elif cmd == 'r':
-            print(f'{player.name} takes a short rest at a fire...')
-            rest_roll = sum(d8.roll(1))
-            rest_heal = player.heal(rest_roll)
-            print(f'{player.name} regains {rest_heal}HP.\n') if rest_heal > 0 \
-                else print(f'{player.name} is already at full HP!\n')
+            rest(d8, player)
 
         elif cmd == 'l':
             player.look(enemies)
@@ -178,6 +96,94 @@ def game_loop(d20, d8, enemies, player):
             print(f'Congratulations! {player.name} has defeated all of their enemies!!')
             print("Thank's for playing!")
             break
+
+
+def rest(d8, player):
+    print(f'{player.name} takes a short rest at a fire...')
+    rest_roll = sum(d8.roll(1))
+    rest_heal = player.heal(rest_roll)
+    print(f'{player.name} regains {rest_heal}HP.\n') if rest_heal > 0 \
+        else print(f'{player.name} is already at full HP!\n')
+
+
+def fight_loop(d20, d8, enemies, player):
+    print('Which combatant do you wish to fight?\n')
+    for idx, entry in enumerate(enemies):
+        print(f'[{idx + 1}] {entry.name}')
+    selected = 0
+    while not selected:
+        enemy = input('==> ')
+        if not enemy:
+            print('No enemy selected. Please re-enter your target.\n')
+            continue
+        try:
+            enemy = int(enemy)
+            selected = 1
+
+        except ValueError:
+            print('Invalid target selection. Please re-enter your target.\n')
+    combat = player.fight(enemy, enemies)
+    if combat:
+        fighter = enemies[enemy - 1]
+        print(f'{player.name} charges at {enemies[enemy - 1].name}!!\n')
+
+        while combat:
+
+            combat_cmd = input('What would you like to do? [A]ttack, [R]un away: ')
+            if not combat_cmd:
+                print("No input detected, please re-enter a command.\n")
+                continue
+            combat_cmd = combat_cmd.lower().strip()
+
+            if combat_cmd == 'a':
+                print('Rolling some dice...\n')
+                # no initiative rolls for now, player always goes first...
+                # Kirito has the fastest reaction times after all :)
+
+                # player attacks target
+                attack_target(d20, d8, fighter, player)  # d20, d8, target, attacker
+                enemy_defeated = health_status(player, fighter, enemies, 'enemy')
+                if enemy_defeated:
+                    combat = 0
+
+                else:
+                    # target attacks player
+                    attack_target(d20, d8, player, fighter)
+                    player_defeated = health_status(player, fighter, enemies, 'player')
+                    if player_defeated:
+                        combat = 0
+
+                    else:
+                        print(f'{player.name} now has {player.HP}HP')
+                        print(f'{fighter.name} now has {fighter.HP}HP\n')
+                    # time.sleep(1)
+
+            elif combat_cmd == 'r':  # this isn't from DnD reference materials... just needed something
+                run_roll = d20.roll(3)
+                run_roll.sort()
+                run_roll = run_roll[0:2]
+
+                if max(run_roll) >= 10 - player.modifiers[1]:  # DEX modifiers adds to escape chance
+                    print(f'{player.name} makes a narrow escape!\n')
+                    combat = 0
+
+                else:
+                    print(f"{player.name} stumbles and can't get away!\n")
+                    # target attacks player
+                    attack_target(d20, d8, player, fighter)
+                    player_defeated = health_status(player, fighter, enemies, 'player')
+                    if player_defeated:
+                        combat = 0
+
+            else:
+                print(f"Sorry, the command '{combat_cmd}' wasn't recognized. Please re-enter a command\n")
+
+    else:
+        print(f'{player.name} charges at... thin air!?')
+        reaction_enemy = random.choice(enemies)
+        print(f'{reaction_enemy.name} reacts to the opening and attacks {player.name}!!...\n')
+        attack_target(d20, d8, player, reaction_enemy)
+        health_status(player, reaction_enemy, enemies, 'player')
 
 
 def attack_target(d20, d8, target, attacker):
