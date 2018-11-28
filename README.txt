@@ -24,7 +24,7 @@ The game consists of easy to read console output and prompts that guide the user
 2. Combatant Instantiation
     a. This phase is completed "behind the scenes" with no input from the player
     b. First, d6, d8, and d20 Die objects are created
-    c. The d6 object is used to determine stat allocation according to computer exectution of dice rolls for each Combatant
+    c. The d6 object is used to determine stat allocation according to computer execution of dice rolls for each Combatant
         - For each stat (STR, DEX, CON, INT, WIS, CHR), 4d6 are rolled
         - Once rolled, the lowest roll is removed and the remaining are summed
         - This sum then temporarily becomes the corresponding stat (the above performed through a for loop)
@@ -37,10 +37,10 @@ The game consists of easy to read console output and prompts that guide the user
 3. Main game loop
     a. Command input
         - Possible commands are: [F]ight, [C]heck Health, [R]est, [L]ook Around, and E[x]it
-        - Commands are made thrugh hinted character input
-        - Sring input is processed using lower() and strip() methods to simplify selection
+        - Commands are made through hinted character input
+        - String input is processed using lower() and strip() methods to simplify selection
         - A blank input yields a no input message before looping
-        - Invalid string input tields a message stating the string is not recognized before looping
+        - Invalid string input yields a message stating the string is not recognized before looping
     b. Combat
         - When this command is selected, the player must first select their target
             - If the target exists, combat will begin between the player and the targeted combatant
@@ -50,23 +50,23 @@ The game consists of easy to read console output and prompts that guide the user
         - If attack is chosen, the player attacks the target first (no initiative rolls at this time to determine order)
             - After the attack, enemy health is checked
             - If the enemy is still alive, they retaliate and attack the player
-            - A similar health check is then performed on the palyer
+            - A similar health check is then performed on the player
             - If either health check determines the combatant is defeated, the combat loop ends and the main loop continues
             - To determine if an attack hits, the simple rule that a d20 roll must be greater than the target AC is applied
-            - Furthermore, a critial hit is scored if a d20 roll results in a value of 20
+            - Furthermore, a critical hit is scored if a d20 roll results in a value of 20
                 - A critical hit then doubles the amount of damage dice rolled (2d8 in this version)
             - Damage is then calculated by rolling damage dice and adding the attackers STR modifier
             - Once calculated, damage is sustained by the target and health is saturated to 0 if dropped below
             - If an enemy combatant is defeated, they are removed from the enemies list and the main loop continues
-            - If the player is defeated, combat ends and the palyer awakens with 1HP restored and the chance to fight again...
-        - If run is chosen, a unique method is employed to determine the palyer's sucess
+            - If the player is defeated, combat ends and the player awakens with 1HP restored and the chance to fight again...
+        - If run is chosen, a unique method is employed to determine the player's success
             - 3d20 are rolled, and the highest value is removed
             - If the maximum value of the remaining dice is above (10 + DEX modifier), the attempt succeeds
-            - If the attempt fails, the enemy attacks the palyer before the combat loop continues
+            - If the attempt fails, the enemy attacks the player before the combat loop continues
         - At the end of a combat round (either attack or run), the loop continues and asks for another player command
     c. Check Health
         - This command lists the player's current/maximum health points
-        - After lsiting, the main loop continues
+        - After listing, the main loop continues
     d. Rest
         - The rest command allows for player health to be restored according to the "short rest" rules from DnD5e
         - This involves a hit die roll (1d8) + CON modifier to determine amount of health restored
